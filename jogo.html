@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogos</title>
 <style>
+    body{
+    background-color: aqua;
+    }
     #dvjogo{
 width: 160px;
 height: 160px;
@@ -77,8 +80,78 @@ font-size: 40px;
      border-top: 1px solid #000;
 
 }
+.geral{
+    display: flex;
+    justify-content: center;
+    box-sizing:initial;
+    align-items: center;
+    width:100%;
+    height:100%;
+    position:absolute;
+    z-index:9;
+    border-radius:0px 11px 4440px 11110px;
+
+background-color: grey;
+
+}
+.cabeca{
+position: absolute;
+top: 0%;
+font-weight: bold;
+font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 
 
+}
+.timer{
+position: absolute;
+top: 90px;
+left: 11px;
+font-size: 30px;
+font-weight: bold;
+}
+button{
+position:fixed;
+bottom: 200px;
+left: 0;
+
+justify-content: center;
+width: 100px;
+height: 52px;
+background-color: green;
+font-weight: bold;
+font-size: 20px;
+
+
+
+}
+.ganhador{
+
+position: absolute;
+bottom: 150px;
+font-size: larger;
+font-weight: bold;
+justify-content: center;
+display: flex;
+right: 125px ;
+z-index: 999;
+
+}
+#dvQuemcomeca{
+position: absolute;
+    top: 120px;
+    font-weight: bold;
+    font-size: large;
+    
+
+}
+#venc{
+background:red;
+position: fixed;
+top:0%;
+z-index:999;
+width: fit-content;
+display: block;
+}
 
 </style>
 <script>
@@ -91,8 +164,82 @@ var nivel=1;
 var jogadaCpu=1;
 var quemComeca=1;
 var jogada=0;
+var jogador_pontos=0;
+var computador_pontos=0;
+
+var segundo=120;
+var comeco=1;
+var timer;
+function start(){
+
+    timer=setInterval(time,1000);
+
+
+}
+function time(){
+--segundo
+
+//document.querySelector(".ganhador").innerHTML="Em instantes o ganhador 10 segundos";
+
+
+document.querySelector(".timer").innerHTML="Tempo:"+segundo;
+ 
+
+if(segundo<1) {
+
+    clearInterval(timer)
+    document.querySelector(".timer").innerHTML="Acabou o tempo !";
+    jogando=false;
+    document.getElementById("dvQuemcomeca").innerHTML="";
+    atualizaTabuleiro()
+     return timer;
+           
+    if(computador_pontos>jogador_pontos){
+    document.querySelector(".ganhador").innerHTML="O ganhador foi o computador: Pontos => "+computador_pontos;
+
+
+   }
+    if(jogador_pontos>computador_pontos){
+    document.querySelector(".ganhador").innerHTML="O ganhador foi o Jogador: Pontos =>"+jogador_pontos;
+   }
+
+   
+    
+    
+}   
+}
+ 
+ 
+
+function zerar(){
+    clearInterval(timer)
+    return timer;
+}   
+
+
+
 
 function cpuJoga(){
+    
+    if(jogador_pontos>=5){
+        
+        document.getElementById("dvQuemcomeca").innerHTML="Mudança de Nível 2 Jogador Joga";
+        
+        nivel=2;
+            
+        
+        
+        }
+        if(computador_pontos>=5){
+            nivel=2;
+         
+            document.getElementById("dvQuemcomeca").innerHTML="Mudança de Nível 2 computador joga";
+            
+           
+            
+            }
+       
+            console.log(nivel)
 if(jogando){
 
     var l,c;
@@ -274,10 +421,10 @@ c=Math.round(Math.random()*2)
 }while(jogo[l][c]!="");
 jogo[l][c]="O";
 }else{
+
 for(var l=0;l<3;l++){
     for(var c=0;c<3;c++){
     if(jogo[l][c]==""){
-
         jogo[l][c]="O";
     }
     
@@ -292,7 +439,7 @@ for(var l=0;l<3;l++){
 
     verifica=verificaVitorio();
     if(verifica!=""){
-    alert(verifica+  "Venceu");
+    alert(verifica+   "venceu");
     jogando=false;
     
     }
@@ -335,6 +482,7 @@ return"";
 }
 
 function jogar(p){
+    
 if((jogando)&&(quemJogo==0)){
 switch(p){
     case 1:
@@ -397,9 +545,11 @@ break;
 if(quemJogo==1){
 atualizaTabuleiro()
 
+
 verifica=verificaVitorio();
 if(verifica!=""){
-alert(verifica+ "Venceu");
+verifica_pontos()
+alert(verifica + "venceu");
 jogando=false;
 
 }
@@ -409,15 +559,17 @@ cpuJoga();
 }
 }
 function atualizaTabuleiro(){
+    verifica_pontos()
+
 for(var l=0;l<3;l++){
     for(var c=0;c<3;c++){
         if(jogo[l][c]=="X"){
             tabuleiro[l][c].innerHTML="X";
-            tabuleiro[l][c].style.cursor="defualt";
+            tabuleiro[l][c].style.cursor="default";
 
         }else if(jogo[l][c]=="O"){
             tabuleiro[l][c].innerHTML="O";
-            tabuleiro[l][c].style.cursor="defualt";
+            tabuleiro[l][c].style.cursor="default";
         }else{
             tabuleiro[l][c].innerHTML="";
             tabuleiro[l][c].style.cursor="pointer";
@@ -429,7 +581,10 @@ for(var l=0;l<3;l++){
 }
 
 function inicia(){
-
+   
+    start();
+    
+    
 jogando=true;
 jogadaCpu=1;
 jogada=0;
@@ -450,29 +605,59 @@ atualizaTabuleiro();
 if(quemComeca==1){
     quemComeca=0;
     quemJogo=quemComeca;
-    document.getElementById("dvQuemcomeca").innerHTML="Quem Começa: Jogador";
+    jogador_pontos++;
+    document.getElementById("dvQuemcomeca").innerHTML="Quem Começa: Jogador :pontos "+jogador_pontos
 
 }else{
 quemComeca=1;
 quemJogo=quemComeca;
-document.getElementById("dvQuemcomeca").innerHTML="Quem Começa: COMPUTADOR";
+computador_pontos++
+document.getElementById("dvQuemcomeca").innerHTML="Quem Começa: COMPUTADOR:pontos "+computador_pontos;
 cpuJoga();
-
+verifica_pontos()
 }
 
 }
 window.addEventListener("load",inicia);
 
+    
+
+function verifica_pontos(){
+if(jogador_pontos>=10){
+
+document.getElementById("dvQuemcomeca").innerHTML="O ganhador foi o Jogador :pontos "+jogador_pontos
+jogador_pontos=0;
+nivel=1;
 
 
+
+}
+if(computador_pontos>=10){
+
+    document.getElementById("dvQuemcomeca").innerHTML="O ganhador foi o Computador :pontos "+computador_pontos
+    computador_pontos=0;
+    nivel=1;
+    
+    }
+}
+    
 </script>
 </head>
 <body>
+    <span id="venc"></span>
+
+    <div class="geral">
+   
+        <h2 class="cabeca">Jogo da Velha</h2>
+    <div class="timer"></div>
+   
     <div id="dvmenu">
         <div id="dvQuemcomeca"></div>
-    <button onclick="inicia()">Iniciar Jogo</button>
     </div>
+    <button onclick="inicia()">Iniciar o Jogo</button>
+
     <div id="dvjogo">
+
         <div id="p1" class="posJogo" onclick="jogar(1)"></div>
         <div id="p2" class="posJogo" onclick="jogar(2)"></div>
         <div id="p3" class="posJogo" onclick="jogar(3)"></div>
@@ -484,5 +669,8 @@ window.addEventListener("load",inicia);
         <div id="p9" class="posJogo" onclick="jogar(9)"></div>
 
     </div>
+</div>
+<div class="ganhador"></div>
+   
 </body>
 </html>
